@@ -1021,6 +1021,136 @@ paths:
                 message: "Error eliminando la iniciativa"
                 error: "Descripción del error"
   
+  /initiatives/getInitiativeCategoriesOfClient/{client_id}:
+    get:
+      summary: Obtener estadísticas de categorías e impactos por cliente
+      description: |
+        Consulta las iniciativas de un cliente específico y genera un reporte estadístico que incluye:
+        - Distribución porcentual de iniciativas por categoría
+        - Conteo de impactos por categoría
+        - Total de iniciativas del cliente
+        
+        **Flujo de operación:**
+        1. Consulta todas las iniciativas del cliente
+        2. Agrupa por categoría
+        3. Consulta los impactos asociados a cada iniciativa
+        4. Calcula porcentajes y totales
+      tags:
+        - Initiatives
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: ID único del cliente a consultar
+          schema:
+            type: string
+            format: uuid
+            example: "fbc1ba07-3979-4eee-9798-df5c03137176"
+      responses:
+        '200':
+          description: Estadísticas obtenidas exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Iniciativas y categorías con impactos"
+                  totalInitiatives:
+                    type: integer
+                    description: Número total de iniciativas del cliente
+                    example: 8
+                  categoriesWithPercentage:
+                    type: array
+                    description: Distribución porcentual de categorías
+                    items:
+                      type: object
+                      properties:
+                        category:
+                          type: string
+                          description: Nombre de la categoría
+                          example: "Environment"
+                        count:
+                          type: integer
+                          description: Número de iniciativas en esta categoría
+                          example: 3
+                        percentage:
+                          type: string
+                          description: Porcentaje del total (formateado)
+                          example: "37.50%"
+                  impactsByCategory:
+                    type: array
+                    description: Impactos ordenados por categoría (mayor a menor)
+                    items:
+                      type: object
+                      properties:
+                        category:
+                          type: string
+                          example: "Environment"
+                        totalImpacts:
+                          type: integer
+                          description: Total de impactos en esta categoría
+                          example: 15
+              example:
+                message: "Iniciativas y categorías con impactos"
+                totalInitiatives: 8
+                categoriesWithPercentage:
+                  - category: "Environment"
+                    count: 3
+                    percentage: "37.50%"
+                  - category: "Education"
+                    count: 2
+                    percentage: "25.00%"
+                impactsByCategory:
+                  - category: "Environment"
+                    totalImpacts: 15
+                  - category: "Education"
+                    totalImpacts: 8
+        '200 (sin resultados)':
+          description: Cliente sin iniciativas registradas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No hay iniciativas para este cliente."
+                  totalInitiatives:
+                    type: integer
+                    example: 0
+                  categoriesWithPercentage:
+                    type: array
+                    example: []
+                  impactsByCategory:
+                    type: array
+                    example: []
+        '400':
+          description: Falta el parámetro client_id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "El campo 'client_id' es obligatorio."
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error al consultar"
+                  error:
+                    type: string
+                    example: "Cannot read property 'Items' of undefined"
+
+
   /initiatives/{initiative_id}/metrics:
     post:
       summary: Agregar métrica a una iniciativa
@@ -1815,7 +1945,509 @@ paths:
                   message:
                     type: string
                     example: "Error interno del servidor"
-              
+  
+  /impacts/totalgiven:
+    post:
+      summary: "Contar impactos realizados por un donante en un rango de fechas"
+      description: |
+        Consulta en DynamoDB la cantidad total de impactos (donaciones/contribuciones) realizadas por un donante específico (`donator_id`)
+        dentro de un rango de fechas (`start_date` y `end_date`). Retorna el conteo y las fechas exactas de cada impacto.
+      tags:
+        - Impacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - donator_id
+                - start_date
+                - end_date
+              properties:
+                donator_id:
+                  type: string
+                  description: "ID único del donante"
+                  example: "8c21106e-240b-4aec-96ab-07db5296d27f"
+                start_date:
+                  type: string
+                  format: date
+                  description: "Fecha de inicio del rango (YYYY-MM-DD)"
+                  example: "2025-03-01"
+                end_date:
+                  type: string
+                  format: date
+                  description: "Fecha de fin del rango (YYYY-MM-DD)"
+                  example: "2025-03-31"
+            example:
+              donator_id: "8c21106e-240b-4aec-96ab-07db5296d27f"
+              start_date: "2025-03-01"
+              end_date: "2025-03-31"
+      responses:
+        '200':
+          description: Conteo de impactos exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Donator impacts count"
+                  count:
+                    type: integer
+                    description: "Número total de impactos encontrados"
+                    example: 5
+                  dates:
+                    type: array
+                    items:
+                      type: string
+                      format: date
+                    description: "Lista de fechas de los impactos (YYYY-MM-DD)"
+                    example: ["2025-03-15", "2025-03-22"]
+              example:
+                message: "Donator impacts count"
+                count: 5
+                dates: ["2025-03-15", "2025-03-22"]
+        '400':
+          description: Faltan campos obligatorios o formato inválido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Los campos 'donator_id', 'start_date' y 'end_date' son obligatorios."
+        '500':
+          description: Error interno al consultar DynamoDB
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error fetching donator impacts"
+                  error:
+                    type: string
+                    example: "DynamoDB query error details"        
+
+  /impacts/{client_id}:
+    get:
+      summary: Obtener todos los impactos de un cliente específico
+      description: |
+        Consulta en la base de datos todos los impactos asociados a un cliente específico utilizando su ID único.
+        Retorna una lista completa de todos los impactos encontrados, incluyendo detalles como tipo, monto y fecha.
+      tags:
+        - Impacts
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: ID único del cliente cuyos impactos se desean consultar
+          schema:
+            type: string
+            format: uuid
+            example: "fbc1ba07-3979-4eee-9798-df5c03137176"
+      responses:
+        '200':
+          description: Lista de impactos obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    impact_id:
+                      type: string
+                      format: uuid
+                      description: ID único del impacto
+                      example: "b2c7a92d-e250-41c8-a925-00a0e58beade"
+                    client_id:
+                      type: string
+                      format: uuid
+                      description: ID del cliente asociado
+                      example: "fbc1ba07-3979-4eee-9798-df5c03137176"
+                    type:
+                      type: string
+                      description: Tipo de impacto (Volunteering, Financial support, Supplies)
+                      example: "Financial support"
+                    amount:
+                      type: number
+                      description: Monto del impacto (si aplica)
+                      example: 1000
+                    creation_date_day_only:
+                      type: string
+                      format: date
+                      description: Fecha del impacto (YYYY-MM-DD)
+                      example: "2025-03-15"
+                    initiative_id:
+                      type: string
+                      format: uuid
+                      description: ID de la iniciativa relacionada
+                      example: "60bcb98d-905c-4c9c-aa48-644d8eedccb9"
+              example:
+                - impact_id: "b2c7a92d-e250-41c8-a925-00a0e58beade"
+                  client_id: "fbc1ba07-3979-4eee-9798-df5c03137176"
+                  type: "Financial support"
+                  amount: 1000
+                  creation_date_day_only: "2025-03-15"
+                  initiative_id: "60bcb98d-905c-4c9c-aa48-644d8eedccb9"
+                - impact_id: "038a634f-ed6b-451c-8a32-e1974fb71650"
+                  client_id: "fbc1ba07-3979-4eee-9798-df5c03137176"
+                  type: "Volunteering"
+                  amount: 0
+                  creation_date_day_only: "2025-03-10"
+                  initiative_id: "60bcb98d-905c-4c9c-aa48-644d8eedccb9"
+        '400':
+          description: Falta el parámetro client_id en la URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "El parámetro client_id es requerido en la URL"
+        '404':
+          description: No se encontraron impactos para el cliente especificado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No se encontraron impactos para este cliente"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error al consultar los impactos"
+                  error:
+                    type: string
+                    example: "Detalle del error de DynamoDB"
+
+  /impacts/totalreceived:
+    post:
+      summary: "Contar impactos recibidos por un cliente en un rango de fechas"
+      description: |
+        Consulta en DynamoDB la cantidad total de impactos (donaciones/contribuciones) recibidas por un cliente específico (`client_id`)
+        dentro de un rango de fechas (`start_date` y `end_date`). Utiliza un GSI optimizado para esta consulta y retorna solo el conteo (no los registros completos).
+      tags:
+        - Impacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - client_id
+                - start_date
+                - end_date
+              properties:
+                client_id:
+                  type: string
+                  format: uuid
+                  description: "ID único del cliente beneficiario"
+                  example: "fbc1ba07-3979-4eee-9798-df5c03137176"
+                start_date:
+                  type: string
+                  format: date
+                  description: "Fecha de inicio del periodo (YYYY-MM-DD)"
+                  example: "2025-03-01"
+                end_date:
+                  type: string
+                  format: date
+                  description: "Fecha de fin del periodo (YYYY-MM-DD)"
+                  example: "2025-03-31"
+            example:
+              client_id: "fbc1ba07-3979-4eee-9798-df5c03137176"
+              start_date: "2025-03-01"
+              end_date: "2025-03-31"
+      responses:
+        '200':
+          description: Conteo de impactos exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Conteo de impactos exitoso"
+                  client_id:
+                    type: string
+                    description: "ID del cliente consultado"
+                  start_date:
+                    type: string
+                    description: "Fecha de inicio usada en la consulta"
+                  end_date:
+                    type: string
+                    description: "Fecha de fin usada en la consulta"
+                  total_impacts:
+                    type: integer
+                    description: "Número total de impactos recibidos"
+              example:
+                message: "Conteo de impactos exitoso"
+                client_id: "fbc1ba07-3979-4eee-9798-df5c03137176"
+                start_date: "2025-03-01"
+                end_date: "2025-03-31"
+                total_impacts: 12
+        '400':
+          description: Faltan campos obligatorios o formato inválido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Los campos 'client_id', 'start_date' y 'end_date' son obligatorios."
+        '500':
+          description: Error interno al consultar DynamoDB
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error al contar los impactos"
+                  error:
+                    type: string
+                    example: "Cannot read property 'Count' of undefined"
+
+  /impacts/Participations/{need_id}:
+    get:
+      summary: "Obtener contribuciones agrupadas por cliente para una necesidad específica"
+      description: |
+        Consulta en DynamoDB todos los impactos asociados a una necesidad específica (`need_id`) y los agrupa por cliente (`client_id`),
+        sumando los montos totales y contando las donaciones individuales.
+        
+        **Características:**
+        - Utiliza el índice global secundario (GSI) `NeedIdIndex` para búsquedas eficientes por `need_id`
+        - Agrupa resultados automáticamente por `client_id`
+        - Retorna montos acumulados y conteo de contribuciones por cliente
+      tags:
+        - Impacts
+      parameters:
+        - name: need_id
+          in: path
+          required: true
+          description: "ID único de la necesidad a consultar"
+          schema:
+            type: string
+            format: uuid
+            example: "9e100402-11d5-484a-b645-71e5ec101be5"
+      responses:
+        '200':
+          description: Lista de contribuciones agrupadas por cliente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Contributions by need_id"
+                  contributions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        client_id:
+                          type: string
+                          format: uuid
+                          description: "ID del cliente contribuyente"
+                          example: "8c21106e-240b-4aec-96ab-07db5296d27f"
+                        totalAmount:
+                          type: number
+                          description: "Suma acumulada de todos los aportes del cliente"
+                          example: 1500
+                        donationCount:
+                          type: integer
+                          description: "Número total de contribuciones individuales"
+                          example: 3
+              example:
+                message: "Contributions by need_id"
+                contributions:
+                  - client_id: "8c21106e-240b-4aec-96ab-07db5296d27f"
+                    totalAmount: 1500
+                    donationCount: 3
+                  - client_id: "48b20bf8-1fa7-4291-b7fc-cb0ef629798a"
+                    totalAmount: 750
+                    donationCount: 2
+        '400':
+          description: Falta el parámetro need_id en la URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "El campo 'need_id' es obligatorio."
+        '404':
+          description: No se encontraron contribuciones para la necesidad especificada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No se encontraron contribuciones para esta necesidad"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error fetching contributions"
+                  error:
+                    type: string
+                    example: "Cannot read property 'Items' of undefined"
+
+  /initiatives/Contributors/{initiative_id}:
+  get:
+    summary: "Obtener contribuyentes únicos de una iniciativa"
+    description: |
+      Consulta todos los impactos asociados a una iniciativa específica y los agrupa por cliente (`client_id`),
+      mostrando:
+      - Total de contribuciones por cliente
+      - Monto acumulado
+      - Lista detallada de cada impacto individual
+      
+      **Características:**
+      - Utiliza el índice GSI `InitiativeIdIndex` para búsquedas eficientes
+      - Agrupación inteligente por `client_id`
+      - Incluye metadatos detallados de cada contribución
+    tags:
+      - Initiatives
+    parameters:
+      - name: initiative_id
+        in: path
+        required: true
+        description: "ID único de la iniciativa a consultar"
+        schema:
+          type: string
+          format: uuid
+          example: "60bcb98d-905c-4c9c-aa48-644d8eedccb9"
+    responses:
+      '200':
+        description: Lista de contribuyentes obtenida exitosamente
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Contribuyentes únicos por iniciativa"
+                totalContributors:
+                  type: integer
+                  description: "Número total de contribuyentes distintos"
+                  example: 2
+                contributors:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      client_id:
+                        type: string
+                        format: uuid
+                        description: "ID único del contribuyente"
+                        example: "8c21106e-240b-4aec-96ab-07db5296d27f"
+                      total_contributions:
+                        type: integer
+                        description: "Número total de aportes realizados"
+                        example: 3
+                      total_amount:
+                        type: number
+                        description: "Suma acumulada de todos los aportes"
+                        example: 1500
+                      contributions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            impact_id:
+                              type: string
+                              description: "ID único del impacto"
+                              example: "b2c7a92d-e250-41c8-a925-00a0e58beade"
+                            amount:
+                              type: number
+                              description: "Monto del aporte individual"
+                              example: 500
+                            date:
+                              type: string
+                              format: date
+                              description: "Fecha del aporte (YYYY-MM-DD)"
+                              example: "2025-03-15"
+            example:
+              message: "Contribuyentes únicos por iniciativa"
+              totalContributors: 2
+              contributors:
+                - client_id: "8c21106e-240b-4aec-96ab-07db5296d27f"
+                  total_contributions: 3
+                  total_amount: 1500
+                  contributions:
+                    - impact_id: "b2c7a92d-e250-41c8-a925-00a0e58beade"
+                      amount: 500
+                      date: "2025-03-15"
+      '200 (sin resultados)':
+        description: Iniciativa sin impactos registrados
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "No hay impactos para esta iniciativa."
+                totalContributors:
+                  type: integer
+                  example: 0
+                contributors:
+                  type: array
+                  items: {}
+                  example: []
+      '400':
+        description: Falta el parámetro initiative_id
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "El campo 'initiative_id' es obligatorio."
+      '500':
+        description: Error interno del servidor
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Error al consultar los impactos"
+                error:
+                  type: string
+                  example: "DynamoDB query error details"
+
   /comments:
     post:
       tags:
