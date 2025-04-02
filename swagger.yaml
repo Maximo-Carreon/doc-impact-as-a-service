@@ -9,10 +9,8 @@ info:
     email: soporte@ejemplo.com
 
 servers:
-  - url: https://{{direccion_api}}/
+  - url: https://api.impact-as-a-service.com/dev/
     description: Producción
-  - url: http://localhost:3000
-    description: Desarrollo
 
 security:
   - cognitoAuth: []
