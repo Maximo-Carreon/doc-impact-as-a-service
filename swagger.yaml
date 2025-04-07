@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: API de ejemplo
+  title: Impact as a Service API
   description: |
-    API REST para gestionar iniciativas y clientes.
+    API REST para gestionar las iniciativas y clientes.
   version: 1.0.0
   contact:
     name: Soporte
@@ -10,7 +10,7 @@ info:
 
 servers:
   - url: https://api.impact-as-a-service.com/dev/
-    description: Producción
+    description: Desarrollo
 
 security:
   - cognitoAuth: []
