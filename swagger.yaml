@@ -21,7 +21,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: "Autenticación con Amazon Cognito (Bearer token)"
+      description: "Autenticación con Amazon Cognito (Bearer token) para mayor facilidad"
       
       
   schemas:
