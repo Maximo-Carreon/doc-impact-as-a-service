@@ -508,6 +508,8 @@ paths:
     get:
       summary: Obtener cliente por slug
       description: Recupera los datos completos de un cliente a partir de su slug único.
+      tag:
+        - Clients
       operationId: getClientBySlug
       parameters:
         - name: slug
