@@ -509,7 +509,7 @@ paths:
       summary: Obtener cliente por slug
       description: Recupera los datos completos de un cliente a partir de su slug único.
       tags:
-        - Clients #Prueba de actualizacion
+        - Clients
       operationId: getClientBySlug
       parameters:
         - name: slug
