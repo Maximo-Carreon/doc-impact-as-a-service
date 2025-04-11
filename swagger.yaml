@@ -503,7 +503,61 @@ paths:
           description: No autorizado
         "404":
           description: Cliente no encontrado        
-              
+
+  /clients/{slug}:
+    get:
+      summary: Obtener cliente por slug
+      description: Recupera los datos completos de un cliente a partir de su slug único.
+      operationId: getClientBySlug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: Slug único del cliente
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cliente encontrado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  client_id:
+                    type: string
+                    example: abc123
+                  name:
+                    type: string
+                    example: Nombre del Cliente
+                  email:
+                    type: string
+                    example: correo@ejemplo.com
+                  # Agrega más campos según los datos que devuelva tu tabla
+        '404':
+          description: Cliente no encontrado con el slug proporcionado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Client not found with given slug
+        '500':
+          description: Error del servidor al intentar recuperar el cliente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error retrieving client
+                  error:
+                    type: string
+                    example: Error detallado del servidor
+
   /clients/{client_id}/needs:
     get:
       summary: Obtener las necesidades de un cliente
