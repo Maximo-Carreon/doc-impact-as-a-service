@@ -25,7 +25,11 @@ components:
       bearerFormat: JWT
       description: "Autenticación con Amazon Cognito (Bearer token) para mayor facilidad"
       
-      
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
   schemas:
     Client:
       type: object
@@ -317,7 +321,7 @@ paths:
       tags:
         - Clients
       security:
-        - cognitoAuth: []
+        - apiKeyAuth: []
       responses:
         "200":
           description: Lista de clientes obtenida con éxito
@@ -373,7 +377,7 @@ paths:
         "400":
           description: Datos inválidos
         "401":
-          description: No autorizado
+          description: No autorizado. Debe proporcionar un header 'x-api-key' con un valor válido (por ejemplo: 'Autorizacion1')
     
     patch:
       summary: Actualizar un cliente existente
