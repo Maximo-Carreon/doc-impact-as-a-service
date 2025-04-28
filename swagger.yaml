@@ -321,7 +321,7 @@ paths:
       tags:
         - Clients
       security:
-        - cognitoAuth: []
+        - apiKeyAuth: []
       responses:
         "200":
           description: Lista de clientes obtenida con éxito
