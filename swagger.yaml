@@ -377,7 +377,7 @@ paths:
         "400":
           description: Datos inválidos
         "401":
-          description: No autorizado. Debe proporcionar un header 'x-api-key' con un valor válido (por ejemplo: 'Autorizacion1')
+          description: No autorizado
     
     patch:
       summary: Actualizar un cliente existente
