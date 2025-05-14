@@ -9,7 +9,7 @@ info:
     email: soporte@ejemplo.com
 
 servers:
-  - url: https://p0ro5ouikc.execute-api.us-west-2.amazonaws.com/
+  - url: https://cx183st2r9.execute-api.us-west-1.amazonaws.com/dev
     description: Desarrollo
   - url: https://api.impact-as-a-service.com/
     description: Producción
