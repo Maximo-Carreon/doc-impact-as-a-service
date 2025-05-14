@@ -3,7 +3,7 @@ info:
   title: Impact as a Service API
   description: |
     API REST para gestionar las iniciativas y clientes.
-  version: 1.0.0
+  version: 1.0.1
   contact:
     name: Soporte
     email: soporte@ejemplo.com
