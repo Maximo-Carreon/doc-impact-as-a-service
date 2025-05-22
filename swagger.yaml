@@ -279,6 +279,7 @@ paths:
         - Clients
       security:
         - cognitoAuth: []
+        - apiIVAuth: []
       requestBody:
         description: Datos del cliente a crear
         required: true
@@ -327,6 +328,7 @@ paths:
         - Clients
       security:
         - apiKeyAuth: []
+        - apiIVAuth: []
       responses:
         "200":
           description: Lista de clientes obtenida con éxito
@@ -389,6 +391,9 @@ paths:
       description: Permite actualizar uno o varios campos de un cliente en la tabla `Clients`. Solo actualiza los campos que han cambiado. No sobrescribe campos con valores vacíos.
       tags:
         - Clients
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       requestBody:
         description: Datos a actualizar del cliente.
         required: true
@@ -472,7 +477,8 @@ paths:
       tags:
         - Clients
       security:
-        - cognitoAuth: []
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: client_id
           in: path
@@ -520,6 +526,9 @@ paths:
       tags:
         - Clients
       operationId: getClientBySlug
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: slug
           in: path
@@ -576,7 +585,8 @@ paths:
       tags:
         - Clients
       security:
-        - cognitoAuth: []
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: client_id
           in: path
@@ -633,6 +643,9 @@ paths:
       description: Permite actualizar las redes sociales de un cliente en la tabla `Clients`. Solo se actualizan los campos que han cambiado y no se sobrescriben los valores vacíos.
       tags:
         - Clients
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       requestBody:
         description: Datos de redes sociales a actualizar para un cliente.
         required: true
@@ -707,6 +720,9 @@ paths:
       description: "Este endpoint permite crear una nueva iniciativa, que puede estar enfocada en una causa medioambiental, social, etc."
       tags: 
         - Initiatives
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       operationId: "createInitiative"
       requestBody:
         required: true
@@ -837,6 +853,9 @@ paths:
       description: "Este endpoint permite obtener todas las iniciativas almacenadas en la base de datos."
       tags: 
         - Initiatives
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       operationId: "getInitiatives"
       responses:
         '200':
@@ -888,6 +907,9 @@ paths:
       description: Actualiza una iniciativa existente en DynamoDB. Solo se actualizan los campos que hayan cambiado.
       tags:
         - Initiatives
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       requestBody:
         required: true
         content:
@@ -971,6 +993,9 @@ paths:
       description: "Este endpoint permite obtener una iniciativa específica a partir de su ID único (initiative_id)."
       tags: 
         - Initiatives
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       operationId: "getInitiativeById"
       parameters:
         - in: path
@@ -1062,6 +1087,9 @@ paths:
       description: Elimina una iniciativa existente en DynamoDB a través de su ID.
       tags:
         - Initiatives
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: initiative_id
           in: path
@@ -1102,6 +1130,9 @@ paths:
         4. Calcula porcentajes y totales
       tags:
         - Initiatives
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: client_id
           in: path
@@ -1222,6 +1253,9 @@ paths:
       description: Agrega una métrica a una iniciativa específica mediante su ID.
       tags:
         - Metrics
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: initiative_id
           in: path
@@ -1287,6 +1321,9 @@ paths:
       description: Obtiene la lista de métricas asociadas a una iniciativa específica mediante su ID.
       tags:
         - Metrics
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: initiative_id
           in: path
@@ -1341,6 +1378,9 @@ paths:
       description: Agrega una necesidad asociada a una iniciativa específica mediante su ID.
       tags:
         - Needs
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: initiative_id
           in: path
@@ -1416,7 +1456,9 @@ paths:
       description: Obtiene todas las necesidades asociadas a una iniciativa específica mediante su ID.
       tags:
         - Needs
-
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: initiative_id
           in: path
@@ -1488,7 +1530,9 @@ paths:
       description: Retorna la lista completa de necesidades (needs) existentes.
       tags:
         - Needs
-
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       responses:
         "200":
           description: Lista de necesidades obtenida correctamente.
@@ -1543,7 +1587,9 @@ paths:
       description: Actualiza los datos de una necesidad específica.
       tags:
         - Needs
-
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       requestBody:
         required: true
         content:
@@ -1620,7 +1666,9 @@ paths:
       description: Obtiene los detalles de una necesidad específica usando su ID.
       tags:
         - Needs
-
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: need_id
           in: path
@@ -1667,6 +1715,9 @@ paths:
       description: Devuelve una lista de iniciativas asociadas a un ID de cliente específico.
       tags:
         - Initiatives
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: client_id
           in: path
@@ -1780,7 +1831,9 @@ paths:
       description: Crea un impacto asociado a una iniciativa específica.
       tags:
         - Impacts
-
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: initiative_id
           in: path
@@ -1867,6 +1920,9 @@ paths:
       description: This endpoint retrieves all impacts for a specific initiative identified by its initiative_id.
       tags:
         - Impacts
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: initiative_id
           in: path
@@ -1934,6 +1990,9 @@ paths:
       operationId: getImpactsByDate
       tags:
         - Impacts
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       requestBody:
         description: Parámetros para consultar los impactos
         required: true
@@ -2019,6 +2078,9 @@ paths:
         dentro de un rango de fechas (`start_date` y `end_date`). Retorna el conteo y las fechas exactas de cada impacto.
       tags:
         - Impacts
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       requestBody:
         required: true
         content:
@@ -2106,6 +2168,9 @@ paths:
         Retorna una lista completa de todos los impactos encontrados, incluyendo detalles como tipo, monto y fecha.
       tags:
         - Impacts
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: client_id
           in: path
@@ -2208,6 +2273,9 @@ paths:
         dentro de un rango de fechas (`start_date` y `end_date`). Utiliza un GSI optimizado para esta consulta y retorna solo el conteo (no los registros completos).
       tags:
         - Impacts
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       requestBody:
         required: true
         content:
@@ -2304,6 +2372,9 @@ paths:
         - Retorna montos acumulados y conteo de contribuciones por cliente
       tags:
         - Impacts
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       parameters:
         - name: need_id
           in: path
@@ -2401,6 +2472,9 @@ paths:
       - Incluye metadatos detallados de cada contribución
     tags:
       - Initiatives
+    security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
     parameters:
       - name: initiative_id
         in: path
@@ -2517,6 +2591,9 @@ paths:
     post:
       tags:
         - Comments
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       summary: Crea un nuevo comentario
       description: Añade un comentario a una iniciativa específica
       operationId: postComments
@@ -2559,6 +2636,9 @@ paths:
       description: Envía un correo electrónico a todos los usuarios registrados con un resumen de las actualizaciones del sistema.
       tags:
         - Notifications
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       requestBody:
         description: Información del correo a enviar
         required: true
@@ -2603,6 +2683,9 @@ paths:
       description: Envía un correo electrónico al área de soporte con la información de la consulta del usuario.
       tags:
         - Notifications
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       requestBody:
         description: Información de la consulta del usuario
         required: true
@@ -2672,6 +2755,9 @@ paths:
         El archivo se almacena en S3 y se devuelve una URL prefirmada para descargarlo.
       tags:
         - Reports
+      security:
+        - apiKeyAuth: []
+        - apiIVAuth: []
       requestBody:
         description: Lista de IDs de iniciativas para generar el reporte
         required: true
