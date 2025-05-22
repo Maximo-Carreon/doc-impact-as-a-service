@@ -30,6 +30,11 @@ components:
       in: header
       name: x-api-key
 
+    apiIVAuth:
+      type: apiKey
+      in: header
+      name: x-api-iv
+
   schemas:
     Client:
       type: object
